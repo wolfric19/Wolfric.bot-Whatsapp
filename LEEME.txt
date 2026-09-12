@@ -1,0 +1,307 @@
+========================================
+  WOLFRIC 3.1.1 — parche de código
+========================================
+- Se sacó código muerto: menuSimple, frontierAyuda vieja,
+  frontierTituloAviso y frontierNormalizarSalida (no-op).
+- jimp salió de package.json (los stickers usan ffmpeg).
+- .rank / .remind / .curar / easter eggs ya no responden
+  "comando no reconocido" después de funcionar.
+- Alias .flee → .huir (el texto del encuentro decía .flee).
+- .guia / .habilidades ahora guardan la ruta del tutorial.
+- .whoami muestra el LID @lid para configurar OWNERS.
+- Typo islandndhome → islandhome.
+- Hito de racha 1000 días: $100.000 (antes $10.000).
+- economia.json se guarda tmp + rename (menos corrupción).
+- Panel web escucha en 127.0.0.1 (PANEL_BIND=0.0.0.0 si hace falta).
+========================================
+
+========================================
+  WOLFRIC V2 — carpeta nueva + botones
+========================================
+
+1) cd ~
+2) unzip el zip
+3) cd wolfric-v2
+4) npm install --no-bin-links
+5) pkg install ffmpeg yt-dlp -y   (si aún no)
+6) node index.js
+
+Sesión nueva: ./sesion
+Si querés reusar la sesión de Wolfric viejo:
+  cp -r ~/bot-wolfric/sesion ./sesion
+  cp ~/bot-wolfric/economia.json ./economia.json
+  cp ~/bot-wolfric/gremios.json ./gremios.json   (si existe)
+
+Comandos botones:
+  .menu   → lista "Seleccionar menú"
+  .botones → botones rápidos
+
+Wolfric viejo queda intacto en bot-wolfric.
+========================================
+
+CAMBIOS DE ESTA VERSIÓN:
+- Arreglo de seguridad: .play/.ytmp3/.ytmp4 tenían inyección de comandos
+  (un link armado con comillas/`;`/backticks podía ejecutar código en el
+  celular). Ahora yt-dlp/ffmpeg se llaman sin pasar por una shell.
+- El bot ya no se cae entero por un error suelto (uncaughtException /
+  unhandledRejection capturados y logueados).
+- Panel web: si no seteás PANEL_KEY, ahora se genera una clave random y
+  se guarda en panel_key.txt (antes quedaba abierto sin clave por defecto).
+- economia.json: si se corrompe, ahora se intenta restaurar del backup
+  automático más reciente en vez de resetear todo a cero en silencio.
+- Nuevo: .take pack|autor (re-empacar un sticker con otro pack/autor),
+  .setstickerpack / .setstickerauthor (owner) y los stickers creados con
+  .sticker ahora llevan el nombre del pack/autor.
+- Nuevo: .tiktok, .ig/.instagram y .fb/.facebook para descargar video
+  directo desde un link (además de .play/.ytmp3/.ytmp4 de YouTube).
+========================================
+
+LOTE 2 — Comunidad, economía y moderación:
+- Referidos: .micodigo / .usarcodigo (recompensa para ambos)
+- Torneo de eliminación directa: .torneo crear/unirse/cerrar/reportar/estado/cancelar
+- Ranking semanal automático a un grupo de avisos: .setgrupoavisos, .setranking
+- Avisos automáticos cuando aparece un boss en otro grupo (mismo .setgrupoavisos)
+- Impuesto configurable del mercado de jugadores + contador de dinero destruido: .setimpuestomercado
+- Eventos programados de doble XP/drop en fechas fijas: .programarevento, .eventosactivos
+  (el multiplicador de XP ya está conectado a todo el sistema de niveles)
+- Reportes de usuarios: .reportar @usuario motivo (llega por privado a los owners)
+- Log de auditoría ampliado (kick/ban/promote/demote/warn) + expuesto en el panel
+  web como JSON en /api/auditoria (con la PANEL_KEY). Balance de uso de
+  ítems/frutas en /api/balance, para ajustar precios sin adivinar.
+- .on/.off dentro de un grupo — apaga/prende el bot en ese grupo sin tocar el resto
+- Idiomas es/pt: .idioma (también .lang / .lingua) abre botones para elegir.
+  .idioma es | .idioma pt guarda el idioma personal. En grupos un admin
+  puede usar .idioma grupo es|pt. Menú, botones e IA respetan el idioma.
+========================================
+
+LOTE 3 — Más anti-baneo:
+- El delay de "escribiendo..." antes de responder ahora es más largo durante
+  el calentamiento (recién iniciado/reconectado) — responder siempre al
+  instante es la señal de bot más obvia.
+- Throttle global: ningún par de mensajes salientes (a cualquier chat) sale
+  con menos de ~350-500ms de diferencia. Antes solo había cooldown por
+  comando, pero nada evitaba una ráfaga cuando el bot le manda a varios
+  chats distintos seguidos (avisos, recordatorios).
+- .tagall / .hidetag (mencionar a todos) ahora tienen su propio cooldown de
+  3 minutos, más estricto que el resto — es el patrón que más vigila
+  WhatsApp, antes compartía el cooldown genérico de 30s.
+- El recordatorio de misión diaria (que manda DM a varios usuarios) ahora
+  espera 3-8s aleatorios entre cada uno y tiene un tope de 40 por corrida,
+  en vez de mandarlos todos en ráfaga.
+- Reconexión con backoff exponencial + jitter (5s, 10s, 20s... hasta 2 min
+  tope) en vez de reintentar siempre cada 5s fijo, que es un patrón de
+  reconexión sospechoso si la red falla seguido. Se resetea al conectar bien.
+========================================
+
+LOTE 4 — Limpieza + prefijo personalizable:
+- Se sacó el exec()/execAsync() que había quedado sin uso (todo pasó a
+  execFileAsync cuando se cerró la inyección de comandos del lote 1).
+- Prefijo personalizable: .setprefix <. ! # /> (owner). El bot SIEMPRE
+  reconoce los 4 símbolos aunque cambies el "oficial" — así nadie queda
+  trabado por no acordarse cuál puso. El elegido es el que se muestra en
+  menús, ayuda y .botinfo.
+========================================
+
+LOTE 5 — IA (Google Gemini):
+- .ia <pregunta> — le preguntás algo suelto a la IA
+- .iachat on/off (admin, por grupo) — modo chat: el bot responde a TODO lo
+  que se hable en el grupo, como un miembro más, con memoria corta de la
+  conversación (se resetea si el bot reinicia)
+- Requiere configurar GEMINI_API_KEY como variable de entorno. Conseguí una
+  gratis en https://aistudio.google.com/apikey (capa gratis generosa) y
+  arrancá el bot así:
+      GEMINI_API_KEY=tu_clave node index.js
+  Si no la configurás, .ia avisa el error y el modo chat simplemente no
+  responde nada (no rompe el resto del bot).
+- Tiene tope diario de 300 consultas y un piso de ~1.2s entre llamadas, para
+  no comerse la cuota gratis (ni la tarjeta si algún día pasás a un plan
+  pago) si un grupo se pone muy activo. Ajustable en el código
+  (IA_TOPE_DIARIO / IA_PISO_MS) si lo necesitás distinto.
+- No agrega dependencias nuevas: usa el fetch nativo de Node (requiere
+  Node 18+; si Termux tiene una versión vieja, hay que actualizar con
+  "pkg upgrade nodejs").
+- Sección propia en el menú: .wolfric ia (aparece también en el listado
+  táctil del .menu)
+========================================
+
+LOTE 6 — Panel profesional + logros nuevos + narración IA:
+- Panel web: pestañas nuevas "Balance" (gráfico de barras de ítems/frutas
+  más usados + dinero destruido) y "Auditoría" (tabla de acciones de
+  admin/owner + reportes) — antes esos datos solo se veían como JSON crudo.
+- Botón de reinicio remoto en Mantenimiento. Ojo: solo corta el proceso;
+  para que vuelva solo hace falta correr el bot con un supervisor (pm2, o
+  un loop en Termux), si no se queda apagado.
+- Logros nuevos: "Reclutador" (3 referidos exitosos) y "Campeón del
+  Torneo" (ganar un torneo) — se suman al sistema de logros que YA existía
+  (.logros), no hacía falta uno nuevo.
+- Al aparecer un boss, si hay GEMINI_API_KEY configurada, la IA manda una
+  línea corta de ambientación como mensaje aparte — no bloquea el aviso
+  principal del boss, y si falla no rompe nada (el aviso ya salió antes).
+- Revisado: el sistema de insignias/logros y el tutorial guiado para gente
+  nueva (.inicio) YA estaban implementados de antes — no se tocaron.
+- Todavía pendiente (queda para más adelante, es más grande): guerra
+  entre gremios.
+========================================
+
+LOTE 7 — Apagar el RPG entero en un grupo:
+- .desactivar rpg — apaga TODO lo del juego (economía, combate, frutas,
+  mazmorras, gremios, mercado, frontier, torneo, títulos, todo) en ESE
+  grupo puntual. Queda solo lo que no es RPG: moderación, bienvenida,
+  stickers, descargas, IA, comandos sociales sueltos (hug/8ball/etc).
+- .activar rpg lo prende de nuevo. Es la misma categoría que ya usaba
+  .desactivar/.activar, solo que ahora "rpg" agrupa +150 comandos del
+  juego de una — antes había que apagarlos por categorías chicas
+  (casino, pvp, etc.) una por una.
+========================================
+
+LOTE 7 — Apagar cosas puntuales por grupo (no todo el bot):
+- .desactivar <comando o categoría> / .activar ... (admin, por grupo) —
+  apaga solo ESE comando (o categoría entera) en ese grupo, sin tocar el
+  resto del bot ni otros grupos. Categorías: casino, descargas, stickers,
+  ia, torneo, pvp.
+- .desactivados — lista qué está apagado en ese grupo.
+- Recordatorio: la bienvenida YA se podía configurar por grupo desde
+  antes (.welcome on/off, .setwelcome <texto>, .goodbye, .setgoodbye) —
+  no hizo falta tocarla, esto solo suma lo de apagar comandos puntuales.
+========================================
+
+LOTE 8 — Anti-raid:
+- .antiraid on/off (admin, por grupo) — detecta entradas masivas
+  sospechosas: si entran N cuentas en menos de X segundos (por defecto 5
+  en 30s, ajustable con .antiraid config <n> <seg>), avisa en el grupo.
+- .antiraid accion alerta|cerrar — "alerta" solo avisa; "cerrar" además
+  revoca el link de invitación del grupo como precaución (necesita que el
+  bot sea admin). Se puede volver a generar un link nuevo a mano después.
+- .antiraid (sin nada) muestra el estado/config actual.
+- Se descartó, a pedido, todo lo relacionado a Telegram como pendiente.
+========================================
+
+LOTE 9 — Anti-peleas (IA):
+- .antipeleas on/off (admin, por grupo) — si la IA detecta que alguien
+  insulta/humilla a otra persona del grupo (o al bot), manda un aviso de
+  buena onda etiquetando a los involucrados. IMPORTANTE: es SOLO un
+  llamado de atención — no toca el sistema de .warn, no cuenta para un
+  kick, no banea a nadie. Es una capa aparte, más blanda.
+- Para no gastar de más la cuota diaria compartida de IA: primero hay un
+  filtro rápido por palabras clave (insultos comunes en español) y recién
+  ahí, si matchea, se le pregunta a Gemini para confirmar — así no se
+  llama a la IA en cada mensaje del grupo. Además tiene cooldown de 45s
+  por grupo, para no repetir el aviso en cada línea de una misma pelea.
+- Requiere GEMINI_API_KEY configurada, igual que el resto de la IA.
+========================================
+
+LOTE 10 — Se ve mejor en Termux + elegís QR o código al vincular:
+- Vinculación: ya NO hay que editar el código para elegir QR o código de
+  vinculación. Al primer arranque (o si borraste ./sesion), el bot
+  pregunta en la terminal: [1] QR o [2] Código (pide el número ahí mismo).
+  También se puede saltear el prompt con variables de entorno, útil si
+  lo corrés con pm2/supervisor sin terminal interactiva:
+      WOLFRIC_LINK_METHOD=code WOLFRIC_PHONE=5215512345678 node index.js
+      WOLFRIC_LINK_METHOD=qr node index.js
+  Sin terminal interactiva y sin esas variables, usa QR por defecto.
+- Se sacó el número de teléfono que estaba hardcodeado en el código.
+- El banner de arranque ahora se adapta: en pantallas angostas (celular
+  en Termux, vertical) usa una versión compacta en vez del ASCII art
+  grande, que quedaba cortado y feo.
+- Nueva caja de resumen apenas conecta: bot, prefijo, si la IA está
+  configurada, URL del panel y versión de Node — todo de un vistazo, en
+  vez de tener que leer línea por línea el log de arranque.
+- El código de vinculación se muestra en una caja prolija, formateado en
+  bloques (ABCD-1234) para que sea más fácil de leer y tipear.
+========================================
+
+FIX — El selector QR/código colgaba la vinculación:
+- Bug real (mío) del LOTE 10: WhatsApp exige un reinicio de conexión a
+  mitad de la vinculación (después de escanear el QR o poner el código),
+  y eso volvía a llamar a startBot(), que volvía a preguntar "¿QR o
+  código?" — colgado esperando una respuesta que nadie iba a escribir en
+  ese momento. Por eso parecía que "se reiniciaba y no vinculaba".
+- Arreglado: la elección de QR/código ahora se pregunta UNA sola vez por
+  proceso, se cachea, y las reconexiones automáticas la reusan sin volver
+  a preguntar.
+- De paso: el banner ya no se redibuja (ni limpia la pantalla) en cada
+  reconexión, solo la primera vez — antes eso también contribuía a la
+  sensación de "se reinicia todo el rato".
+========================================
+
+FIX — Gemini devolvía 404:
+- Google dio de baja gemini-2.0-flash. Se actualizó al reemplazo actual:
+  gemini-3.6-flash.
+- Se sacó el parámetro "temperature" de las llamadas — los modelos
+  gemini-3.x ya no lo aceptan (lo removieron junto con top_p/top_k), así
+  que mandarlo podía romper la request igual aunque el modelo estuviera bien.
+========================================
+
+FIX — Error "welcome error" en bucle / mensajes de bienvenida rotos:
+- El listener de entradas/salidas de grupo asumía que cada participante
+  llegaba como string (jid). En esta versión de Baileys a veces llega
+  como objeto ({ id: '...' }), y eso rompía sendMessage con "Received an
+  instance of Object" — se repetía por cada entrada y tapaba la consola.
+- Arreglado: ahora se normaliza el participante venga como venga (string
+  u objeto) antes de usarlo.
+========================================
+
+FIX — La IA tardaba y a veces cortaba la respuesta a la mitad:
+- Causa real: los modelos gemini-3.x "piensan" antes de responder por
+  defecto, y eso puede gastar una parte grande (a veces la mayoría) del
+  límite de tokens en pensamiento invisible — quedando menos lugar para
+  la respuesta real, que salía cortada. Y ese pensamiento también suma
+  tiempo, de ahí la demora.
+- Arreglado: se le puso thinkingConfig.thinkingLevel = "low" (respuesta
+  rápida y directa, ideal para un chat) y se subió maxOutputTokens de
+  350 a 800 para tener más margen igual.
+- Si en algún momento vuelve a cortarse, va a quedar un aviso en la
+  consola ("Respuesta de Gemini cortada por límite de tokens") para
+  saber que hay que subir maxOutputTokens todavía más.
+========================================
+
+EXTRA — Easter egg .cazat:
+- Typo clásico de .cazar. Ahora es una mini-escena random (4 versiones,
+  tipo combate falso/cinemático/absurdo) en vez de una sola línea seca,
+  con etiqueta a quien lo escribió. Pedido de la comunidad, según contás.
+========================================
+
+EXTRA — Panel web con efectos tipo reactbits.dev:
+- Fondo animado de puntos que respiran suave (canvas puro, sin React ni
+  build tools — el panel sigue siendo HTML plano servido por Node, ideal
+  para Termux).
+- Título con efecto "shine" (brillo dorado que recorre el texto), tanto
+  en la pantalla de login como en el header del dashboard.
+- Ahora además: los puntos del fondo reaccionan al mouse (se agrandan e
+  iluminan cerca del cursor, también funciona con el dedo en pantallas
+  táctiles), y el título entra animado letra por letra al cargar la
+  página (estilo "Split Text" de reactbits). Cards con un hover-lift
+  sutil de yapa.
+========================================
+
+LOTE 11 — Más funciones de IA:
+- .describe [pregunta] (o .describir) — respondé a una imagen (o
+  mandala directo) y la IA describe qué hay. Usa Gemini multimodal
+  (imagen + texto en la misma consulta).
+- .traducir <idioma> <texto> — traductor con IA. También funciona
+  respondiendo a un mensaje: .traducir inglés (sin texto propio, toma
+  el mensaje citado).
+- .resumen [cantidad] — resume los últimos mensajes del grupo (30 por
+  defecto, hasta 60). Requiere que se hayan mandado al menos 5 mensajes
+  desde que arrancó el bot — el historial es solo en memoria (liviano,
+  no se guarda en disco) y se resetea si reiniciás.
+- Los tres comparten la misma cuota diaria y el mismo cooldown por
+  usuario (8s) que .ia, para no gastar de más.
+========================================
+
+MEJORA — Anti-peleas ahora cierra el grupo:
+- Nuevo comportamiento por defecto: al detectar una pelea, el bot cierra
+  el grupo (solo admins pueden escribir) por unos minutos, en vez de solo
+  avisar. Se reabre SOLO cuando pasa el tiempo — no depende de que la IA
+  detecte "ya se calmaron", así que es confiable.
+- .antipeleas accion aviso|cerrar — para volver al modo anterior (solo
+  aviso, sin cerrar nada) si lo preferís.
+- .antipeleas duracion <minutos> — cuánto queda cerrado (3 min por
+  defecto, ajustable de 1 a 60).
+- Sigue sin aplicar NUNCA un strike real ni banear a nadie — "cerrar"
+  pausa el chat para TODOS por igual, no castiga a nadie en particular.
+- Necesita que el bot sea admin del grupo para poder cerrarlo. Si no lo
+  es, cae de vuelta al aviso normal y te avisa en consola.
+- Si alguien reabre el grupo a mano durante ese rato, el bot lo respeta
+  y no lo vuelve a cerrar por su cuenta.
+========================================

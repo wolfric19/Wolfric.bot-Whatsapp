@@ -1,0 +1,29 @@
+WOLFRIC PROTOCOL — LICENCIA DE USO
+
+Copyright © Wolfric Protocol. Todos los derechos reservados.
+Canal oficial: https://whatsapp.com/channel/0029VbDSzOv8KMqcStjGog1T
+
+Este código se publica para que la comunidad pueda verlo, aprender de él
+y correr su propia instancia del bot. Sin embargo:
+
+1. NO está permitido redistribuir, revender, ni republicar este código
+   (modificado o sin modificar) bajo otro nombre o marca, presentándolo
+   como un proyecto propio o de terceros.
+
+2. NO está permitido eliminar los créditos, el aviso de copyright, ni
+   la referencia al canal oficial de este archivo o de sus derivados.
+
+3. Se permite hacer fork, modificarlo para uso personal, y correr tu
+   propia instancia del bot para tu propio grupo o comunidad, siempre
+   que se mantenga el crédito a los autores originales (Wolfric
+   Protocol) visible en el código y en el bot (por ejemplo, en el
+   menú o al iniciar sesión).
+
+4. Cualquier uso comercial, reventa, o distribución masiva sin
+   autorización expresa de los autores está prohibido.
+
+El incumplimiento de estos términos no genera automáticamente una
+consecuencia legal garantizada — esta licencia es una declaración de
+intención y condición de uso, no un contrato de software libre
+estándar (no es MIT, GPL, ni Apache). Si tenés dudas sobre un uso
+específico, contactá a través del canal oficial antes de proceder.

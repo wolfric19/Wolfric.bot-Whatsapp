@@ -1,0 +1,45 @@
+# === Datos de una instancia real — NO van al repo ===
+economia.json
+economia.json.tmp
+gremios.json
+guerra_gremios.json
+admin_log.json
+evento_amigo.json
+grupos_config.json
+uso_stats.json
+reportes.json
+eventos_programados.json
+torneos.json
+beta_reset_hecho.json
+frontier_mundo.json
+frontier_resonancia.json
+frontier_soberano.json
+frontier_temporada_02_reinicio.json
+panel_key.txt
+
+# Backups
+backups/
+*.backup-*.json
+economia.backup-*.json
+
+# Sesión de WhatsApp (credenciales) — NUNCA subir
+sesion/
+session/
+auth_info*/
+*.creds.json
+
+# Node
+node_modules/
+npm-debug.log*
+package-lock.json
+
+# Local
+.env
+.DS_Store
+*.log
+*.bak
+*.bak-*
+index.js.bak*
+panel-web.js.bak*
+sticker_prefs.json
+sticker_albums/

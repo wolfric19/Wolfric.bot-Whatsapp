@@ -1,0 +1,13 @@
+{
+  "botName": "Wolfric",
+  "botEmoji": "🐺",
+  "botVersion": "3.2.0",
+  "welcomeMsg": "",
+  "channelUrl": "",
+  "channelName": "Canal Wolfric",
+  "welcomeOn": true,
+  "backupHoras": 6,
+  "stickerPack": "Wolfric",
+  "stickerAuthor": "Wolfric Protocol",
+  "prefix": "."
+}

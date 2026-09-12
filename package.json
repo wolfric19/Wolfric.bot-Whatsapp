@@ -1,0 +1,15 @@
+{
+  "name": "wolfric-v2",
+  "version": "3.2.0",
+  "description": "Wolfric Protocol — Baileys con botones/listas",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@itsliaaa/baileys": "latest",
+    "@hapi/boom": "^10.0.1",
+    "pino": "^9.0.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
